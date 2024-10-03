@@ -29,10 +29,15 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }
 
+    const logout = () => {
+        return auth.signOut();
+    };
+
     const value = {
         currentUser,
         userLoggedIn,
-        loading
+        loading,
+        logout
     };
 
     return (
