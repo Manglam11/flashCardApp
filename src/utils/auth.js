@@ -51,19 +51,39 @@ export const doSignInWithGithub = async () => {
 };
 
 export const doSignOut = () => {
-  return auth.signOut();
+  try {
+    return auth.signOut();
+  } catch (error) {
+    console.log("Error signing out", error.message);
+    throw error;
+  }
 };
 
 export const doPasswordReset = (email) => {
-  return sendPasswordResetEmail(auth, email);
+  try {
+    return sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    console.log("Error resetting password", error.message);
+    throw error;
+  }
 };
 
 export const doPasswordChange = (password) => {
-  return updatePassword(auth.currentUser, password);
+  try {
+    return updatePassword(auth.currentUser, password);
+  } catch (error) {
+    console.log("Error changing password", error.message);
+    throw error;
+  }
 };
 
 export const doSendEmailVerification = () => {
-  return sendEmailVerification(auth.currentUser, {
-    url: `${window.location.origin}/home`,
-  });
+  try {
+    return sendEmailVerification(auth.currentUser, {
+      url: `${window.location.origin}/home`,
+    });
+  } catch (error) {
+    console.log("Error sending email verification", error.message);
+    throw error;
+  }
 };
