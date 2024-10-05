@@ -5,6 +5,10 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   updatePassword,
+  updateProfile,
+  setPersistence,
+  browserSessionPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "./firebase";
 import {
@@ -21,8 +25,17 @@ export const doCreateUserWithEmailAndPassword = async (email, password) => {
   }
 };
 
-export const dosignInWithEmailAndPassword = async (email, password) => {
+export const dosignInWithEmailAndPassword = async (
+  email,
+  password,
+  rememberMe
+) => {
   try {
+    const persistence = rememberMe
+      ? browserLocalPersistence
+      : browserSessionPersistence;
+    await setPersistence(auth, persistence);
+
     return signInWithEmailAndPassword(auth, email, password);
   } catch (error) {
     console.log("Error signing in with email and password", error.message);
