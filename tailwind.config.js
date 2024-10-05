@@ -6,6 +6,7 @@ export default {
     extend: {
       colors: {
         primary: {
+          DEFAULT: "#3b82f6", // You can adjust this color
           50: "#eff6ff",
           100: "#dbeafe",
           200: "#bfdbfe",
@@ -57,5 +58,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/forms"), // Add this plugin for form-specific classes
+  ],
 };
