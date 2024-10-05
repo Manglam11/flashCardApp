@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import loginbg from '../../assets/login-bg.svg';
-import { dosignInWithEmailAndPassword } from '../../utils/auth'
+import { dosignInWithEmailAndPassword, doSignInWithGithub, doSignInWithGoogle } from '../../utils/auth'
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/ReactToastify.css'
 import { ToastContainer, toast } from 'react-toastify'
-
+import { FaGoogle, FaGithub } from 'react-icons/fa';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const Login = () => {
                 draggable: true,
             })
             setTimeout(() => {
-                navigate('/home')
+                navigate('/')
             }, (2000))
         } catch (error) {
             console.error("Login failed!", error)
@@ -56,6 +56,32 @@ const Login = () => {
     const handleRememberMeChange = (e) => {
         setRememberMe(e.target.checked)
     }
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await doSignInWithGoogle();
+            toast.success("Google Sign-in Successful!")
+            setTimeout(() => {
+                navigate('/')
+            }, 2000)
+        } catch (error) {
+            console.error("Google sign in failed!", error);
+            toast.error(`Google Sign-in Failed: ${error.message}`);
+        }
+    }
+
+    const handleGithubSignIn = async () => {
+        try {
+            await doSignInWithGithub();
+            toast.success("GitHub Sign-in Successful!")
+            setTimeout(() => {
+                navigate('/')
+            }, 2000)
+        } catch (error) {
+            console.error("GitHub sign in failed!", error.message)
+            toast.error("GitHub Sign-in Faild. Plese try again.")
+        }
+    }
     return (
 
         <section className="h-screen">
@@ -77,6 +103,11 @@ const Login = () => {
                         <form onSubmit={handleSubmit}>
                             {/* Email input */}
                             <div className={`relative mb-3 ${email && 'data-[twe-input-state-active]:placeholder-active'}`} data-twe-input-wrapper-init>
+                                <label
+                                    htmlFor="email"
+                                >
+                                    Email address
+                                </label>
                                 <input
                                     type="email"
                                     onChange={handleEmailChange}
@@ -85,15 +116,16 @@ const Login = () => {
                                     placeholder="Email address"
                                     className="peer block min-h-[auto] w-full rounded border-2 border-gray-300 bg-transparent px-3 py-2 leading-[2.15] outline-none transition-all duration-200 ease-linear focus:border-primary focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                                 />
-                                <label
-                                    htmlFor="email"
-                                >
-                                    Email address
-                                </label>
+
                             </div>
 
                             {/* Password input */}
                             <div className={`relative mb-6 ${password && 'data-[twe-input-state-active]:placeholder-active'}`} data-twe-input-wrapper-init>
+                                <label
+                                    htmlFor="password"
+                                >
+                                    Password
+                                </label>
                                 <input
                                     type="password"
                                     onChange={handlePasswordChange}
@@ -102,11 +134,7 @@ const Login = () => {
                                     placeholder="Password"
                                     className="peer block min-h-[auto] w-full rounded border-2 border-gray-300 bg-transparent px-3 py-2 leading-[2.15] outline-none transition-all duration-200 ease-linear focus:border-primary focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                                 />
-                                <label
-                                    htmlFor="password"
-                                >
-                                    Password
-                                </label>
+
                             </div>
 
                             {/* Remember me checkbox */}
@@ -154,38 +182,22 @@ const Login = () => {
                             </div>
 
                             {/* Social login buttons */}
-                            <a
-                                className="mb-3 flex w-full items-center justify-center rounded bg-primary px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                                style={{ backgroundColor: '#3b5998' }}
-                                href="#!"
-                                role="button"
+                            <button
+                                onClick={handleGoogleSignIn}
+                                className="mb-3 flex w-full items-center justify-center rounded bg-red-600 px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#dc2626] transition duration-150 ease-in-out hover:bg-red-700 hover:shadow-[0_8px_9px_-4px_rgba(220,38,38,0.3),0_4px_18px_0_rgba(220,38,38,0.2)] focus:bg-red-700 focus:shadow-[0_8px_9px_-4px_rgba(220,38,38,0.3),0_4px_18px_0_rgba(220,38,38,0.2)] focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-[0_8px_9px_-4px_rgba(220,38,38,0.3),0_4px_18px_0_rgba(220,38,38,0.2)]"
+                                type="button"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="mr-2 h-3.5 w-3.5"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                                </svg>
-                                Continue with Facebook
-                            </a>
-                            <a
-                                className="mb-3 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                                style={{ backgroundColor: '#55acee' }}
-                                href="#!"
-                                role="button"
+                                <FaGoogle className="mr-2 h-3.5 w-3.5" />
+                                Continue with Google
+                            </button>
+                            <button
+                                onClick={handleGithubSignIn}
+                                className="mb-3 flex w-full items-center justify-center rounded bg-gray-800 px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#1f2937] transition duration-150 ease-in-out hover:bg-gray-900 hover:shadow-[0_8px_9px_-4px_rgba(31,41,55,0.3),0_4px_18px_0_rgba(31,41,55,0.2)] focus:bg-gray-900 focus:shadow-[0_8px_9px_-4px_rgba(31,41,55,0.3),0_4px_18px_0_rgba(31,41,55,0.2)] focus:outline-none focus:ring-0 active:bg-gray-900 active:shadow-[0_8px_9px_-4px_rgba(31,41,55,0.3),0_4px_18px_0_rgba(31,41,55,0.2)]"
+                                type="button"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="mr-2 h-3.5 w-3.5"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                                </svg>
-                                Continue with X
-                            </a>
+                                <FaGithub className="mr-2 h-3.5 w-3.5" />
+                                Continue with GitHub
+                            </button>
                         </form>
                     </div>
                 </div>

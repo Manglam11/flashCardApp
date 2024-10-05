@@ -11,10 +11,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "./firebase";
-import {
-  GithubAuthProvider,
-  GoogleAuthProvider,
-} from "firebase/auth/web-extension";
+import { GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
   try {
@@ -46,9 +43,16 @@ export const dosignInWithEmailAndPassword = async (
 export const doSignInWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    provider.setCustomParameters({
+      prompt: "select_account",
+    });
+    const result = await signInWithPopup(auth, provider);
+    console.log("Google sign-in successful", result.user);
+    return result;
   } catch (error) {
-    console.log("Error signing in with google", error.message);
+    console.error("Error signing in with Google", error);
+    console.error("Error code:", error.code);
+    console.error("Error message:", error.message);
     throw error;
   }
 };
