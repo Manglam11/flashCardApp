@@ -32,8 +32,9 @@ export const dosignInWithEmailAndPassword = async (
       ? browserLocalPersistence
       : browserSessionPersistence;
     await setPersistence(auth, persistence);
-
-    return signInWithEmailAndPassword(auth, email, password);
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    console.log("User from Firebase after login:", result.user); // Add this line
+    return result;
   } catch (error) {
     console.log("Error signing in with email and password", error.message);
     throw error;
@@ -63,6 +64,15 @@ export const doSignInWithGithub = async () => {
     return signInWithPopup(auth, provider);
   } catch (error) {
     console.log("Error signing in with github", error.message);
+    throw error;
+  }
+};
+
+export const doUpdateProfile = async (user, profile) => {
+  try {
+    await updateProfile(user, profile);
+  } catch (error) {
+    console.log("Error updating profile", error.message);
     throw error;
   }
 };
