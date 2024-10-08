@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import loginbg from '../../assets/login-bg.svg';
-import { dosignInWithEmailAndPassword, doSignInWithGithub, doSignInWithGoogle } from '../../utils/auth'
+import { dosignInWithEmailAndPassword, doSignInWithGithub, doSignInWithGoogle, doUpdateProfile } from '../../utils/auth'
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/ReactToastify.css'
 import { ToastContainer, toast } from 'react-toastify'
 import { FaGoogle, FaGithub } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('')
     const [rememberMe, setRememberMe] = useState(false)
+    const { initializeUser } = useAuth()
     const navigate = useNavigate()
 
 
@@ -18,8 +20,11 @@ const Login = () => {
         e.preventDefault();
         try {
             setErrorMessage('')
-            await dosignInWithEmailAndPassword(email, password, rememberMe);
-            toast.success("Login Successfull!", {
+            const userCredential = await dosignInWithEmailAndPassword(email, password, rememberMe);
+            const user = userCredential.user;
+            console.log("User after login:", user);
+
+            toast.success("Login Successful!", {
                 position: 'top-right',
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -27,12 +32,13 @@ const Login = () => {
                 pauseOnHover: true,
                 draggable: true,
             })
+            initializeUser(user)
             setTimeout(() => {
                 navigate('/')
-            }, (2000))
+            }, 2000)
         } catch (error) {
             console.error("Login failed!", error)
-            setErrorMessage(error.message || "an error occured during login..")
+            setErrorMessage(error.message || "An error occurred during login.")
             toast.error("Login Failed!", {
                 position: 'top-right',
                 autoClose: 3000,

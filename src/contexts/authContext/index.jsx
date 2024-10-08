@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
 
     async function initializeUser(user) {
         if (user) {
+            console.log("Initializing user:", user);
             setCurrentUser({ ...user });
             setUserLoggedIn(true);
         } else {
@@ -37,7 +38,8 @@ export function AuthProvider({ children }) {
         currentUser,
         userLoggedIn,
         loading,
-        logout
+        logout,
+        initializeUser,
     };
 
     return (

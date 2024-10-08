@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import registerSvg from '../../assets/register-svg.svg'; // Make sure to have this SVG in your assets
 import { ToastContainer, toast } from 'react-toastify'
-import { doCreateUserWithEmailAndPassword } from '../../utils/auth.js'
+import { doCreateUserWithEmailAndPassword, doUpdateProfile } from '../../utils/auth.js'
+
 
 const Register = () => {
+    const { initializeUser } = useAuth();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -22,7 +25,7 @@ const Register = () => {
 
     const isStrongPassword = (password) => {
         // Password should be at least 8 characters long and contain at least one number, one uppercase and one lowercase letter
-        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
         const result = passwordRegex.test(password);
         console.log('Password strength check:', password, result);
         return result;
@@ -77,8 +80,6 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('')
-
         if (!isValidEmail(email)) {
             setErrorMessage("Please enter a valid email address.")
             return;
@@ -90,8 +91,14 @@ const Register = () => {
         }
         setIsRegistering(true)
         try {
-
-            await doCreateUserWithEmailAndPassword(email, password);
+            setErrorMessage('')
+            const userCredential = await doCreateUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            await doUpdateProfile(user, {
+                displayName: `${firstName}`,
+            });
+            console.log("User after registration:", user); // Add this line
+            await user.reload()
             toast.success("Registration Successfull!", {
                 position: 'top-right',
                 autoClose: 2000,
@@ -100,9 +107,8 @@ const Register = () => {
                 pauseOnHover: true,
                 draggable: true,
             })
-            setTimeout(() => {
-                navigate('/login')
-            }, (2000))
+            initializeUser(user);
+            navigate('/');
 
         } catch (error) {
             console.error("Registration failed!", error)

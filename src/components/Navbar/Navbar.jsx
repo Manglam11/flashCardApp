@@ -5,6 +5,7 @@ import logo from '../../assets/flashCard-Logo.jpg'
 
 const Navbar = () => {
     const { currentUser, userLoggedIn, logout } = useAuth();
+    console.log("Current user in Navbar:", currentUser); // Add this line
 
     const handleLogout = async () => {
         try {
@@ -26,7 +27,7 @@ const Navbar = () => {
                     {userLoggedIn ? (
                         <>
                             <span className="text-lg font-medium text-gray-900 dark:text-white mr-4">
-                                {currentUser.displayName}
+                                {currentUser.displayName?.toUpperCase()}
                             </span>
                             <button
                                 onClick={handleLogout}
